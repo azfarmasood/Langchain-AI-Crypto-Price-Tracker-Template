@@ -31,9 +31,39 @@
     .analysis-card {
       background-color: #f8f9fa;
       border-left: 4px solid #0d6efd;
-      padding: 15px;
+      padding: 20px;
       margin-bottom: 20px;
       border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .analysis-text {
+      white-space: pre-line;
+      line-height: 1.6;
+      margin-bottom: 0;
+      font-size: 14px;
+      color: #333;
+    }
+    .price-card {
+      transition: transform 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .price-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+    .price-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+    .currency-label {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .section-title {
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #eee;
     }
   </style>
 </head>
@@ -50,7 +80,7 @@
         <div class="row">
           {% for key, source in sources.items() %}
           <div class="col-md-3 mb-3">
-            <div class="card h-100 crypto-card">
+            <div class="card h-100 crypto-card {% if key == 'bitcoin_prices' %}border-primary{% endif %}">
               <div class="card-body d-flex flex-column">
                 <h5 class="card-title">{{ source.name }}</h5>
                 <div class="mt-auto">
@@ -84,21 +114,27 @@
           <h3>Results</h3>
         </div>
         <div class="card-body">
+          <!-- Price Information Section -->
+          <div id="price-section" class="mb-5">
+            <h4 class="section-title">Current Prices</h4>
+            <div id="price-content" class="mb-4"></div>
+          </div>
+
+          <!-- Visualization -->
+          <div id="visualization-section" class="mb-5">
+            <h4 class="section-title">Price Chart</h4>
+            <div id="visualization" class="mb-4"></div>
+          </div>
+          
           <!-- Analysis Section -->
           <div id="analysis-section">
-            <h4>Market Analysis</h4>
+            <h4 class="section-title">Market Analysis</h4>
             <div id="analysis-content" class="mb-4"></div>
           </div>
 
           <!-- Download Link -->
-          <div id="download-section" class="mb-4">
+          <div id="download-section" class="mb-4 text-end">
             <a id="download-link" href="#" class="btn btn-primary">Download CSV</a>
-          </div>
-
-          <!-- Visualization -->
-          <div id="visualization-section">
-            <h4>Price Chart</h4>
-            <div id="visualization" class="mb-4"></div>
           </div>
         </div>
       </div>
@@ -134,28 +170,42 @@
       const resultsDiv = document.getElementById('results');
       const analysisSection = document.getElementById('analysis-section');
       const analysisContent = document.getElementById('analysis-content');
+      const priceSection = document.getElementById('price-section');
+      const priceContent = document.getElementById('price-content');
       const downloadSection = document.getElementById('download-section');
       const visualizationSection = document.getElementById('visualization-section');
 
       resultsDiv.style.display = 'block';
 
       if (data.error) {
-        // Just hide all sections on error
-        analysisSection.style.display = downloadSection.style.display = visualizationSection.style.display = 'none';
+        // Hide all sections on error
+        priceSection.style.display = 'none';
+        visualizationSection.style.display = 'none';
+        downloadSection.style.display = 'none';
+        
         // Show error in the analysis section instead
         analysisSection.style.display = 'block';
         analysisContent.innerHTML = `<div class="alert alert-danger mb-4"><p><strong>Error:</strong> ${data.error}</p></div>`;
         return;
       }
 
-      // Success
+      // Show price data
+      priceSection.style.display = 'block';
+      priceContent.innerHTML = generatePriceHTML(data.data);
+      
+      // Show chart visualization
+      visualizationSection.style.display = 'block';
+      const visDiv = document.getElementById('visualization');
+      visDiv.innerHTML = data.images?.chart
+        ? `<img src="/${data.images.chart}" alt="Cryptocurrency Price Chart" class="img-fluid">`
+        : '<p>No visualization available</p>';
+      
+      // Show analysis data
       analysisSection.style.display = 'block';
       analysisContent.innerHTML = generateAnalysisHTML(data.data);
 
+      // Show download link
       downloadSection.style.display = 'block';
-      visualizationSection.style.display = 'block';
-
-      // Download link
       const downloadLink = document.getElementById('download-link');
       if (data.csv_file) {
         const src = data.csv_file.split('/')[1].split('_')[0];
@@ -165,32 +215,135 @@
         downloadLink.style.display = 'none';
       }
 
-      // Chart
-      const visDiv = document.getElementById('visualization');
-      visDiv.innerHTML = data.images?.chart
-        ? `<img src="/${data.images.chart}" alt="Cryptocurrency Price Chart">`
-        : '<p>No visualization available</p>';
-
+      // Scroll to results
       resultsDiv.scrollIntoView({ behavior: 'smooth' });
     }
 
     function generateAnalysisHTML(data) {
-      let html = '';
-      if (data.analysis) {
-        return `<div class="analysis-card">
-          <h5>Bitcoin Market Analysis</h5>
-          <p>${data.analysis}</p>
-        </div>`;
-      }
-      for (const key in data) {
-        if (key !== 'updated' && data[key].analysis) {
-          html += `<div class="analysis-card">
-            <h5>${key} Market Analysis</h5>
-            <p>${data[key].analysis}</p>
+      try {
+        let html = '';
+        
+        // Format analysis text to preserve newlines and spacing
+        const formatAnalysisText = (text) => {
+          if (!text) return 'No analysis available';
+          
+          // Replace newlines with <br> tags and ensure proper spacing
+          return text
+            .replace(/\n/g, '<br>')
+            .replace(/\s{2,}/g, ' ')
+            .trim();
+        };
+        
+        if (data.analysis) {
+          return `<div class="analysis-card">
+            <h5 class="mb-3">Bitcoin Market Analysis</h5>
+            <p class="analysis-text">${formatAnalysisText(data.analysis)}</p>
           </div>`;
         }
+        
+        // For multiple cryptocurrencies
+        for (const key in data) {
+          if (key !== 'updated' && !key.startsWith('error') && data[key].analysis) {
+            html += `<div class="analysis-card mb-4">
+              <h5 class="mb-3">${key} Market Analysis</h5>
+              <p class="analysis-text">${formatAnalysisText(data[key].analysis)}</p>
+            </div>`;
+          }
+        }
+        
+        return html || '<p>No analysis available</p>';
+      } catch (error) {
+        console.error("Error generating analysis HTML:", error);
+        return '<div class="alert alert-danger">Error displaying analysis data</div>';
       }
-      return html || '<p>No analysis available</p>';
+    }
+
+    function generatePriceHTML(data) {
+      try {
+        if (!data) {
+          return '<p>No price data available</p>';
+        }
+
+        let html = '<div class="row">';
+        
+        // Special case for Bitcoin Prices with USD/EUR/GBP
+        if (data.USD) {
+          html += `
+            <div class="col-md-4 mb-3">
+              <div class="card h-100 price-card">
+                <div class="card-header bg-primary text-white">
+                  <h5 class="mb-0">Bitcoin Prices</h5>
+                </div>
+                <div class="card-body">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      <span class="currency-label">USD:</span> <span class="price-value">${data.USD.rate || 'N/A'}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      <span class="currency-label">EUR:</span> <span class="price-value">${data.EUR?.rate || 'N/A'}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      <span class="currency-label">GBP:</span> <span class="price-value">${data.GBP?.rate || 'N/A'}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>`;
+        } else {
+          // For all other cryptocurrencies
+          let foundCrypto = false;
+          
+          for (const key in data) {
+            if (key !== 'updated' && !key.startsWith('error')) {
+              const crypto = data[key];
+              if (crypto && (crypto.price_usd || crypto.formatted)) {
+                foundCrypto = true;
+                const price = crypto.formatted || `$${crypto.price_usd}`;
+                
+                html += `
+                  <div class="col-md-4 mb-3">
+                    <div class="card h-100 price-card">
+                      <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">${key}</h5>
+                      </div>
+                      <div class="card-body text-center">
+                        <div class="price-value mb-3">${price}</div>`;
+                        
+                if (crypto.price_eur) {
+                  try {
+                    html += `<p class="card-text mb-2"><span class="currency-label">EUR:</span> €${parseFloat(crypto.price_eur).toFixed(2)}</p>`;
+                  } catch (e) {
+                    html += `<p class="card-text mb-2"><span class="currency-label">EUR:</span> €${crypto.price_eur}</p>`;
+                  }
+                }
+                
+                if (crypto.price_gbp) {
+                  try {
+                    html += `<p class="card-text mb-2"><span class="currency-label">GBP:</span> £${parseFloat(crypto.price_gbp).toFixed(2)}</p>`;
+                  } catch (e) {
+                    html += `<p class="card-text mb-2"><span class="currency-label">GBP:</span> £${crypto.price_gbp}</p>`;
+                  }
+                }
+                
+                html += `
+                      </div>
+                    </div>
+                  </div>`;
+              }
+            }
+          }
+          
+          if (!foundCrypto) {
+            return '<div class="alert alert-info">No cryptocurrency price data available</div>';
+          }
+        }
+        
+        html += '</div>';
+        return html;
+      } catch (error) {
+        console.error("Error generating price HTML:", error);
+        return '<div class="alert alert-danger">Error displaying price data</div>';
+      }
     }
 
     function showLoading() {
