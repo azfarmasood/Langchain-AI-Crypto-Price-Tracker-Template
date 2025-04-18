@@ -1,252 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CR.Chellange Cryptocurrency Price Tracker</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        img {
-            max-width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        pre {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .loading {
-            display: none;
-        }
-        .crypto-card {
-            transition: transform 0.3s ease;
-        }
-        .crypto-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .crypto-button {
-            width: 100%;
-        }
-        .analysis-card {
-            background-color: #f8f9fa;
-            border-left: 4px solid #0d6efd;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CR.Chellange Cryptocurrency Price Tracker</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+  <style>
+    img {
+      max-width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .loading { display: none; }
+    .crypto-card { transition: transform 0.3s ease; }
+    .crypto-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .crypto-button { width: 100%; }
+    .analysis-card {
+      background-color: #f8f9fa;
+      border-left: 4px solid #0d6efd;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">CR.Chellange Cryptocurrency Price Tracker</h1>
-        
-        <!-- Cryptocurrency Selection -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h3>Choose a Cryptocurrency</h3>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    {% for key, source in sources.items() %}
-                    <div class="col-md-3 mb-3">
-                        <div class="card h-100 crypto-card">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">{{ source.name }}</h5>
-                                <div class="mt-auto">
-                                    <button class="btn btn-primary crypto-button scrape-btn" data-source="{{ key }}">Get Prices</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">CR.Chellange Cryptocurrency Price Tracker</h1>
+
+    <!-- Cryptocurrency Selection -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h3>Choose a Cryptocurrency</h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          {% for key, source in sources.items() %}
+          <div class="col-md-3 mb-3">
+            <div class="card h-100 crypto-card">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ source.name }}</h5>
+                <div class="mt-auto">
+                  <button
+                    class="btn btn-primary crypto-button scrape-btn"
+                    data-source="{{ key }}"
+                  >
+                    Get Prices
+                  </button>
                 </div>
+              </div>
             </div>
+          </div>
+          {% endfor %}
         </div>
-        
-        <!-- Loading indicator -->
-        <div id="loading" class="loading text-center">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p>Getting cryptocurrency prices... please wait</p>
-        </div>
-        
-        <!-- Results section -->
-        <div id="results" style="display: none;">
-            <div class="card">
-                <div class="card-header bg-dark text-white">
-                    <h3>Results</h3>
-                </div>
-                <div class="card-body">
-                    <!-- Data Summary -->
-                    <h4>Price Summary</h4>
-                    <div id="data-summary" class="alert alert-info mb-4"></div>
-                    
-                    <!-- Analysis Section -->
-                    <div id="analysis-section">
-                        <h4>Market Analysis</h4>
-                        <div id="analysis-content" class="mb-4"></div>
-                    </div>
-                    
-                    <!-- Download Link -->
-                    <div id="download-section" class="mb-4">
-                        <a id="download-link" href="#" class="btn btn-primary">Download CSV</a>
-                    </div>
-                    
-                    <!-- Visualization -->
-                    <div id="visualization-section">
-                        <h4>Price Chart</h4>
-                        <div id="visualization" class="mb-4"></div>
-                    </div>
-                    
-                    <!-- Data Preview -->
-                    <div id="data-section">
-                        <h4>Data Details</h4>
-                        <pre id="data-preview"></pre>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-    
-    <footer class="bg-light py-3 mt-5">
-        <div class="container text-center">
-            <p>CR.Chellange Cryptocurrency Price Tracker</p>
+
+    <!-- Loading indicator -->
+    <div id="loading" class="loading text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p>Getting cryptocurrency prices... please wait</p>
+    </div>
+
+    <!-- Results section -->
+    <div id="results" style="display: none;">
+      <div class="card">
+        <div class="card-header bg-dark text-white">
+          <h3>Results</h3>
         </div>
-    </footer>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Source button click handler
-            document.querySelectorAll('.scrape-btn').forEach(button => {
-                button.addEventListener('click', async function() {
-                    const source = this.getAttribute('data-source');
-                    await scrapeSource(source);
-                });
-            });
-            
-            // Function to scrape a source
-            async function scrapeSource(source) {
-                showLoading();
-                try {
-                    const response = await fetch(`/scrape/${source}`);
-                    const data = await response.json();
-                    displayResults(data);
-                } catch (error) {
-                    alert('Error: ' + error);
-                }
-                hideLoading();
-            }
-            
-            // Function to display results
-            function displayResults(data) {
-                const resultsDiv = document.getElementById('results');
-                const summaryDiv = document.getElementById('data-summary');
-                const analysisSection = document.getElementById('analysis-section');
-                const analysisContent = document.getElementById('analysis-content');
-                const downloadSection = document.getElementById('download-section');
-                const visualizationSection = document.getElementById('visualization-section');
-                const dataSection = document.getElementById('data-section');
-                
-                resultsDiv.style.display = 'block';
-                
-                // Display data summary
-                if (data.error) {
-                    // Handle error case - just show error message
-                    summaryDiv.className = 'alert alert-danger mb-4';
-                    summaryDiv.innerHTML = `<p><strong>Error:</strong> ${data.error}</p>`;
-                    
-                    // Hide other sections
-                    analysisSection.style.display = 'none';
-                    downloadSection.style.display = 'none';
-                    visualizationSection.style.display = 'none';
-                    dataSection.style.display = 'none';
-                    return;
-                }
-                
-                // Success case - show all data
-                summaryDiv.className = 'alert alert-info mb-4';
-                summaryDiv.innerHTML = `
-                    <p><strong>Source:</strong> ${data.source}</p>
-                    <p><strong>CSV File:</strong> ${data.csv_file || 'None'}</p>
-                `;
-                
-                // Display analysis
-                analysisSection.style.display = 'block';
-                analysisContent.innerHTML = generateAnalysisHTML(data.data);
-                
-                // Show other sections
-                downloadSection.style.display = 'block';
-                visualizationSection.style.display = 'block';
-                dataSection.style.display = 'block';
-                
-                // Set download link
-                const downloadLink = document.getElementById('download-link');
-                if (data.csv_file) {
-                    const source = data.csv_file.split('/')[1].split('_')[0];
-                    downloadLink.href = `/download/${source}`;
-                    downloadLink.style.display = 'inline-block';
-                } else {
-                    downloadLink.style.display = 'none';
-                }
-                
-                // Display visualization
-                const visDiv = document.getElementById('visualization');
-                if (data.images && data.images.chart) {
-                    visDiv.innerHTML = `<img src="/${data.images.chart}" alt="Cryptocurrency Price Chart">`;
-                } else {
-                    visDiv.innerHTML = '<p>No visualization available</p>';
-                }
-                
-                // Display data preview
-                const previewDiv = document.getElementById('data-preview');
-                previewDiv.textContent = JSON.stringify(data.data, null, 2);
-                
-                // Scroll to results
-                resultsDiv.scrollIntoView({ behavior: 'smooth' });
-            }
-            
-            // Function to generate analysis HTML
-            function generateAnalysisHTML(data) {
-                let html = '';
-                
-                // If the data has a direct analysis property (for bitcoin_prices)
-                if (data.analysis) {
-                    html += `<div class="analysis-card">
-                        <h5>Bitcoin Market Analysis</h5>
-                        <p>${data.analysis}</p>
-                    </div>`;
-                    return html;
-                }
-                
-                // For multiple cryptocurrencies
-                for (const crypto in data) {
-                    if (crypto !== 'updated' && typeof data[crypto] === 'object' && data[crypto].analysis) {
-                        html += `<div class="analysis-card">
-                            <h5>${crypto} Market Analysis</h5>
-                            <p>${data[crypto].analysis}</p>
-                        </div>`;
-                    }
-                }
-                
-                return html || '<p>No analysis available</p>';
-            }
-            
-            // Show loading indicator
-            function showLoading() {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('results').style.display = 'none';
-            }
-            
-            // Hide loading indicator
-            function hideLoading() {
-                document.getElementById('loading').style.display = 'none';
-            }
-        });
-    </script>
+        <div class="card-body">
+          <!-- Data Summary -->
+          <h4>Price Summary</h4>
+          <div id="data-summary" class="alert alert-info mb-4"></div>
+
+          <!-- Analysis Section -->
+          <div id="analysis-section">
+            <h4>Market Analysis</h4>
+            <div id="analysis-content" class="mb-4"></div>
+          </div>
+
+          <!-- Download Link -->
+          <div id="download-section" class="mb-4">
+            <a id="download-link" href="#" class="btn btn-primary">Download CSV</a>
+          </div>
+
+          <!-- Visualization -->
+          <div id="visualization-section">
+            <h4>Price Chart</h4>
+            <div id="visualization" class="mb-4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-light py-3 mt-5">
+    <div class="container text-center">
+      <p>CR.Chellange Cryptocurrency Price Tracker</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.scrape-btn').forEach(button => {
+        button.addEventListener('click', () => scrapeSource(button.dataset.source));
+      });
+    });
+
+    async function scrapeSource(source) {
+      showLoading();
+      try {
+        const res = await fetch(`/scrape/${source}`);
+        const data = await res.json();
+        displayResults(data);
+      } catch (err) {
+        alert('Error: ' + err);
+      }
+      hideLoading();
+    }
+
+    function displayResults(data) {
+      const resultsDiv = document.getElementById('results');
+      const summaryDiv = document.getElementById('data-summary');
+      const analysisSection = document.getElementById('analysis-section');
+      const analysisContent = document.getElementById('analysis-content');
+      const downloadSection = document.getElementById('download-section');
+      const visualizationSection = document.getElementById('visualization-section');
+
+      resultsDiv.style.display = 'block';
+
+      if (data.error) {
+        summaryDiv.className = 'alert alert-danger mb-4';
+        summaryDiv.innerHTML = `<p><strong>Error:</strong> ${data.error}</p>`;
+        analysisSection.style.display = downloadSection.style.display = visualizationSection.style.display = 'none';
+        return;
+      }
+
+      // Success
+      summaryDiv.className = 'alert alert-info mb-4';
+      summaryDiv.innerHTML = `
+        <p><strong>Source:</strong> ${data.source}</p>
+        <p><strong>CSV File:</strong> ${data.csv_file || 'None'}</p>
+      `;
+
+      analysisSection.style.display = 'block';
+      analysisContent.innerHTML = generateAnalysisHTML(data.data);
+
+      downloadSection.style.display = 'block';
+      visualizationSection.style.display = 'block';
+
+      // Download link
+      const downloadLink = document.getElementById('download-link');
+      if (data.csv_file) {
+        const src = data.csv_file.split('/')[1].split('_')[0];
+        downloadLink.href = `/download/${src}`;
+        downloadLink.style.display = 'inline-block';
+      } else {
+        downloadLink.style.display = 'none';
+      }
+
+      // Chart
+      const visDiv = document.getElementById('visualization');
+      visDiv.innerHTML = data.images?.chart
+        ? `<img src="/${data.images.chart}" alt="Cryptocurrency Price Chart">`
+        : '<p>No visualization available</p>';
+
+      resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function generateAnalysisHTML(data) {
+      let html = '';
+      if (data.analysis) {
+        return `<div class="analysis-card">
+          <h5>Bitcoin Market Analysis</h5>
+          <p>${data.analysis}</p>
+        </div>`;
+      }
+      for (const key in data) {
+        if (key !== 'updated' && data[key].analysis) {
+          html += `<div class="analysis-card">
+            <h5>${key} Market Analysis</h5>
+            <p>${data[key].analysis}</p>
+          </div>`;
+        }
+      }
+      return html || '<p>No analysis available</p>';
+    }
+
+    function showLoading() {
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('results').style.display = 'none';
+    }
+    function hideLoading() {
+      document.getElementById('loading').style.display = 'none';
+    }
+  </script>
 </body>
-</html> 
+</html>
