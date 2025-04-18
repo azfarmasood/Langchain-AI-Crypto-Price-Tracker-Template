@@ -84,10 +84,6 @@
           <h3>Results</h3>
         </div>
         <div class="card-body">
-          <!-- Data Summary -->
-          <h4>Price Summary</h4>
-          <div id="data-summary" class="alert alert-info mb-4"></div>
-
           <!-- Analysis Section -->
           <div id="analysis-section">
             <h4>Market Analysis</h4>
@@ -136,7 +132,6 @@
 
     function displayResults(data) {
       const resultsDiv = document.getElementById('results');
-      const summaryDiv = document.getElementById('data-summary');
       const analysisSection = document.getElementById('analysis-section');
       const analysisContent = document.getElementById('analysis-content');
       const downloadSection = document.getElementById('download-section');
@@ -145,19 +140,15 @@
       resultsDiv.style.display = 'block';
 
       if (data.error) {
-        summaryDiv.className = 'alert alert-danger mb-4';
-        summaryDiv.innerHTML = `<p><strong>Error:</strong> ${data.error}</p>`;
+        // Just hide all sections on error
         analysisSection.style.display = downloadSection.style.display = visualizationSection.style.display = 'none';
+        // Show error in the analysis section instead
+        analysisSection.style.display = 'block';
+        analysisContent.innerHTML = `<div class="alert alert-danger mb-4"><p><strong>Error:</strong> ${data.error}</p></div>`;
         return;
       }
 
       // Success
-      summaryDiv.className = 'alert alert-info mb-4';
-      summaryDiv.innerHTML = `
-        <p><strong>Source:</strong> ${data.source}</p>
-        <p><strong>CSV File:</strong> ${data.csv_file || 'None'}</p>
-      `;
-
       analysisSection.style.display = 'block';
       analysisContent.innerHTML = generateAnalysisHTML(data.data);
 
