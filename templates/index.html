@@ -102,24 +102,27 @@
       box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
     }
     
-    /* Crypto Icon Styles */
     .crypto-icon {
-      width: 64px;
-      height: 64px;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      height: 70px;
       margin-bottom: 15px;
     }
     
     .crypto-icon img {
-      width: 100%;
-      height: 100%;
+      max-width: 50px;
+      max-height: 50px;
       object-fit: contain;
       border-radius: 50%;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      padding: 2px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       background-color: white;
+      padding: 5px;
+      transition: transform 0.3s ease;
+    }
+    
+    .crypto-icon img:hover {
+      transform: scale(1.1);
     }
     
     /* Analysis Card Styles */
@@ -343,26 +346,26 @@
             <div class="card h-100 crypto-card {% if key == 'bitcoin_prices' %}border-primary{% endif %}">
               <div class="card-body d-flex flex-column p-4">
                 <div class="crypto-icon mb-3">
-                  {% if 'bitcoin' in key %}
-                    <img src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png" alt="Bitcoin Logo">
+                  {% if 'bitcoin_prices' in key or 'bitcoin' in key %}
+                    <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/btc.png" alt="Bitcoin" width="50" height="50">
                   {% elif 'ethereum' in key %}
-                    <img src="https://assets.coingecko.com/coins/images/279/large/ethereum.png" alt="Ethereum Logo">
+                    <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/eth.png" alt="Ethereum" width="50" height="50">
                   {% elif 'solana' in key %}
-                    <img src="https://assets.coingecko.com/coins/images/4128/large/solana.png" alt="Solana Logo">
+                    <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/sol.png" alt="Solana" width="50" height="50">
                   {% elif 'binance' in key or 'bnb' in key %}
-                    <img src="https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png" alt="Binance Coin Logo">
+                    <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/bnb.png" alt="BNB" width="50" height="50">
                   {% elif 'xrp' in key or 'ripple' in key %}
-                    <img src="https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png" alt="XRP Logo">
+                    <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/xrp.png" alt="XRP" width="50" height="50">
                   {% elif 'cardano' in key %}
-                    <img src="https://assets.coingecko.com/coins/images/975/large/cardano.png" alt="Cardano Logo">
+                    <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/ada.png" alt="Cardano" width="50" height="50">
                   {% elif 'dogecoin' in key %}
-                    <img src="https://assets.coingecko.com/coins/images/5/large/dogecoin.png" alt="Dogecoin Logo">
+                    <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/doge.png" alt="Dogecoin" width="50" height="50">
                   {% elif 'polkadot' in key %}
-                    <img src="https://assets.coingecko.com/coins/images/12171/large/polkadot.png" alt="Polkadot Logo">
+                    <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/dot.png" alt="Polkadot" width="50" height="50">
                   {% elif 'top' in key %}
-                    <img src="https://cdn-icons-png.flaticon.com/512/6001/6001527.png" alt="Top Cryptocurrencies">
+                    <i class="bi bi-bar-chart-line fs-1 text-success"></i>
                   {% else %}
-                    <img src="https://cdn-icons-png.flaticon.com/512/2091/2091665.png" alt="Cryptocurrency">
+                    <i class="bi bi-cash-coin fs-1 text-primary"></i>
                   {% endif %}
                 </div>
                 <h5 class="card-title mb-3">{{ source.name }}</h5>
@@ -383,55 +386,50 @@
     </div>
 
     <!-- Loading indicator -->
-    <div id="loading" class="loading text-center my-5 py-5">
-      <div class="spinner-border mb-3" role="status">
+    <div id="loading" class="loading text-center">
+      <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
-      <p class="lead">Getting cryptocurrency data... please wait</p>
-      <div class="progress mt-3" style="height: 6px; max-width: 300px; margin: 0 auto;">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
-      </div>
+      <p>Getting cryptocurrency prices... please wait</p>
     </div>
 
     <!-- Results section -->
     <div id="results" style="display: none;">
-      <div class="card mb-5">
+      <div class="card">
         <div class="card-header bg-dark text-white">
-          <h3 id="results-title" class="mb-0"><i class="bi bi-check-circle me-2"></i>Results</h3>
+          <h3 id="results-title">Results</h3>
         </div>
-        <div class="card-body p-4">
+        <div class="card-body">
           <!-- Price Information Section -->
           <div id="price-section" class="mb-5">
-            <h4 class="section-title"><i class="bi bi-cash-coin me-2"></i>Current Prices</h4>
+            <h4 class="section-title">Current Prices</h4>
             <div id="price-content" class="mb-4"></div>
           </div>
 
           <!-- Visualization -->
           <div id="visualization-section" class="mb-5">
-            <h4 class="section-title"><i class="bi bi-graph-up me-2"></i>Price Chart</h4>
-            <div id="visualization" class="mb-4 text-center"></div>
+            <h4 class="section-title">Price Chart</h4>
+            <div id="visualization" class="mb-4"></div>
           </div>
           
           <!-- Analysis Section -->
           <div id="analysis-section">
-            <h4 class="section-title"><i class="bi bi-filetype-ai me-2"></i>Market Analysis</h4>
+            <h4 class="section-title">Market Analysis</h4>
             <div id="analysis-content" class="mb-4"></div>
           </div>
 
           <!-- Download Link -->
           <div id="download-section" class="mb-4 text-end">
-            <a id="download-link" href="#" class="btn btn-primary">
-              <i class="bi bi-download me-2"></i>Download CSV
-            </a>
+            <a id="download-link" href="#" class="btn btn-primary">Download CSV</a>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <footer class="py-4 mt-5">
+  <footer class="bg-light py-3 mt-5">
     <div class="container text-center">
-      <p class="mb-0">CR.Chellange Cryptocurrency Price Tracker</p>
+      <p>CR.Chellange Cryptocurrency Price Tracker</p>
     </div>
   </footer>
 
@@ -476,7 +474,7 @@
     async function processPrompt(prompt) {
       showLoading();
       try {
-        const res = await fetch('/prompt', {
+        const res = await fetch('/query', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -496,13 +494,26 @@
       hideLoading();
       
       if (data.error) {
-        document.getElementById('results').style.display = 'block';
-        document.getElementById('results-title').textContent = 'Error';
-        document.getElementById('price-section').style.display = 'none';
-        document.getElementById('visualization-section').style.display = 'none';
-        document.getElementById('analysis-section').style.display = 'none';
-        document.getElementById('download-section').style.display = 'none';
-        document.getElementById('information-section').style.display = 'none';
+        const resultsElement = document.getElementById('results');
+        if (resultsElement) resultsElement.style.display = 'block';
+        
+        const resultsTitle = document.getElementById('results-title');
+        if (resultsTitle) resultsTitle.textContent = 'Error';
+        
+        const priceSection = document.getElementById('price-section');
+        if (priceSection) priceSection.style.display = 'none';
+        
+        const visualizationSection = document.getElementById('visualization-section');
+        if (visualizationSection) visualizationSection.style.display = 'none';
+        
+        const analysisSection = document.getElementById('analysis-section');
+        if (analysisSection) analysisSection.style.display = 'none';
+        
+        const downloadSection = document.getElementById('download-section');
+        if (downloadSection) downloadSection.style.display = 'none';
+        
+        const infoSection = document.getElementById('information-section');
+        if (infoSection) infoSection.style.display = 'none';
         
         // Add error div if not exists
         let errorDiv = document.getElementById('error-message');
@@ -517,7 +528,8 @@
         errorDiv.style.display = 'block';
         
         // Scroll to results
-        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        const resultElement = document.getElementById('results');
+        if (resultElement) resultElement.scrollIntoView({ behavior: 'smooth' });
         return;
       }
       
@@ -529,8 +541,10 @@
       
       // Set results title
       const resultsDiv = document.getElementById('results');
-      resultsDiv.style.display = 'block';
-      document.getElementById('results-title').textContent = `Results for: "${data.prompt}"`;
+      if (resultsDiv) resultsDiv.style.display = 'block';
+      
+      const resultsTitle = document.getElementById('results-title');
+      if (resultsTitle) resultsTitle.textContent = `Results for: "${data.prompt}"`;
       
       // Get section elements
       const priceSection = document.getElementById('price-section');
@@ -545,50 +559,131 @@
       // Check if this is an information query or price query
       if (data.query_type === 'information') {
         // Information response - hide price sections, show information
-        priceSection.style.display = 'none';
-        visualizationSection.style.display = 'none';
-        analysisSection.style.display = 'none';
-        downloadSection.style.display = 'none';
+        if (priceSection) priceSection.style.display = 'none';
+        if (visualizationSection) visualizationSection.style.display = 'none';
+        if (analysisSection) analysisSection.style.display = 'none';
+        if (downloadSection) downloadSection.style.display = 'none';
         
         // Show information section
-        informationSection.style.display = 'block';
-        informationContent.innerHTML = `
-          <div class="analysis-card info-section">
-            <p class="analysis-text">${formatText(data.information)}</p>
-          </div>`;
+        if (informationSection) informationSection.style.display = 'block';
+        if (informationContent) {
+          // Check if this is a greeting response (more reliable detection)
+          const isGreeting = data.source === "Conversation" && 
+                       data.information && 
+                       data.information.startsWith("Hi! I'm your Crypto Currency AI agent");
+          
+          if (isGreeting) {
+            // For greeting responses, show a welcome card with robot icon
+            informationSection.querySelector('.section-title').textContent = "Welcome";
+            informationContent.innerHTML = `
+              <div class="analysis-card info-section">
+                <div class="mb-4 d-flex align-items-center">
+                  <i class="bi bi-robot fs-1 text-primary me-3"></i>
+                  <h3>Crypto AI Assistant</h3>
+                </div>
+                <p class="analysis-text">${formatText(data.information)}</p>
+              </div>`;
+          } else {
+            // For regular information, use the normal display
+            // Helper function to get appropriate cryptocurrency logo
+            informationSection.querySelector('.section-title').textContent = "Cryptocurrency Information";
+            const getCryptoLogo = (query) => {
+              const queryLower = query.toLowerCase();
+              let logoUrl = '';
+              let cryptoName = '';
+              
+              if (queryLower.includes('bitcoin')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/btc.png';
+                cryptoName = 'Bitcoin';
+              } else if (queryLower.includes('ethereum')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/eth.png';
+                cryptoName = 'Ethereum';
+              } else if (queryLower.includes('solana')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/sol.png';
+                cryptoName = 'Solana';
+              } else if (queryLower.includes('binance') || queryLower.includes('bnb')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/bnb.png';
+                cryptoName = 'Binance Coin (BNB)';
+              } else if (queryLower.includes('xrp') || queryLower.includes('ripple')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/xrp.png';
+                cryptoName = 'XRP';
+              } else if (queryLower.includes('cardano')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/ada.png';
+                cryptoName = 'Cardano';
+              } else if (queryLower.includes('dogecoin')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/doge.png';
+                cryptoName = 'Dogecoin';
+              } else if (queryLower.includes('polkadot')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/dot.png';
+                cryptoName = 'Polkadot';
+              } else if (queryLower.includes('blockchain')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/svg/icon/generic.svg';
+                cryptoName = 'Blockchain';
+              }
+              
+              return { logoUrl, cryptoName };
+            };
+            
+            const { logoUrl, cryptoName } = getCryptoLogo(data.prompt);
+            
+            let titleHtml = '';
+            if (logoUrl && cryptoName) {
+              titleHtml = `
+                <div class="mb-4 d-flex align-items-center">
+                  <img src="${logoUrl}" alt="${cryptoName}" width="40" height="40" class="me-3">
+                  <h3>${cryptoName} Information</h3>
+                </div>
+              `;
+            }
+            
+            informationContent.innerHTML = `
+              <div class="analysis-card info-section">
+                ${titleHtml}
+                <p class="analysis-text">${formatText(data.information)}</p>
+              </div>`;
+          }
+        }
       } else {
         // Price query response - show prices, hide information
-        informationSection.style.display = 'none';
+        if (informationSection) informationSection.style.display = 'none';
         
         // Show price data
-        priceSection.style.display = 'block';
-        priceContent.innerHTML = generatePriceHTML(data.data);
+        if (priceSection) priceSection.style.display = 'block';
+        if (priceContent) {
+          priceContent.innerHTML = generatePriceHTML(data.data);
+        }
         
         // Show chart visualization
-        visualizationSection.style.display = 'block';
+        if (visualizationSection) visualizationSection.style.display = 'block';
         const visDiv = document.getElementById('visualization');
-        visDiv.innerHTML = data.images?.chart
-          ? `<img src="/${data.images.chart}" alt="Cryptocurrency Price Chart" class="img-fluid">`
-          : '<p>No visualization available</p>';
+        if (visDiv) {
+          visDiv.innerHTML = data.images?.chart
+            ? `<img src="/${data.images.chart}" alt="Cryptocurrency Price Chart" class="img-fluid">`
+            : '<p>No visualization available</p>';
+        }
         
         // Show analysis data
-        analysisSection.style.display = 'block';
-        analysisContent.innerHTML = generateAnalysisHTML(data.data);
+        if (analysisSection) analysisSection.style.display = 'block';
+        if (analysisContent) {
+          analysisContent.innerHTML = generateAnalysisHTML(data.data);
+        }
 
         // Show download link
-        downloadSection.style.display = 'block';
+        if (downloadSection) downloadSection.style.display = 'block';
         const downloadLink = document.getElementById('download-link');
-        if (data.csv_file) {
-          const src = data.csv_file.split('/')[1].split('_')[0];
-          downloadLink.href = `/download/${src}`;
-          downloadLink.style.display = 'inline-block';
-        } else {
-          downloadLink.style.display = 'none';
+        if (downloadLink) {
+          if (data.csv_file) {
+            const src = data.csv_file.split('/')[1].split('_')[0];
+            downloadLink.href = `/download/${src}`;
+            downloadLink.style.display = 'inline-block';
+          } else {
+            downloadLink.style.display = 'none';
+          }
         }
       }
 
       // Scroll to results
-      resultsDiv.scrollIntoView({ behavior: 'smooth' });
+      if (resultsDiv) resultsDiv.scrollIntoView({ behavior: 'smooth' });
     }
     
     function createInformationSection() {
@@ -636,6 +731,29 @@
       try {
         let html = '';
         
+        // Helper function to get logo URL based on cryptocurrency name
+        const getLogoUrl = (cryptoName) => {
+          const lowerName = cryptoName.toLowerCase();
+          if (lowerName.includes('bitcoin')) {
+            return 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/btc.png';
+          } else if (lowerName.includes('ethereum')) {
+            return 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/eth.png';
+          } else if (lowerName.includes('solana')) {
+            return 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/sol.png';
+          } else if (lowerName.includes('binance') || lowerName.includes('bnb')) {
+            return 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/bnb.png';
+          } else if (lowerName.includes('xrp') || lowerName.includes('ripple')) {
+            return 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/xrp.png';
+          } else if (lowerName.includes('cardano')) {
+            return 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/ada.png';
+          } else if (lowerName.includes('dogecoin')) {
+            return 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/doge.png';
+          } else if (lowerName.includes('polkadot')) {
+            return 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/dot.png';
+          }
+          return '';
+        };
+        
         // Format analysis text to preserve newlines and spacing
         const formatAnalysisText = (text) => {
           if (!text) return 'No analysis available';
@@ -648,8 +766,12 @@
         };
         
         if (data.analysis) {
+          const bitcoinLogo = getLogoUrl('bitcoin');
           return `<div class="analysis-card">
-            <h5 class="mb-3">Bitcoin Market Analysis</h5>
+            <h5 class="mb-3 d-flex align-items-center">
+              ${bitcoinLogo ? `<img src="${bitcoinLogo}" alt="Bitcoin" width="30" height="30" class="me-2">` : ''}
+              Bitcoin Market Analysis
+            </h5>
             <p class="analysis-text">${formatAnalysisText(data.analysis)}</p>
           </div>`;
         }
@@ -657,8 +779,12 @@
         // For multiple cryptocurrencies
         for (const key in data) {
           if (key !== 'updated' && !key.startsWith('error') && data[key].analysis) {
+            const logoUrl = getLogoUrl(key);
             html += `<div class="analysis-card mb-4">
-              <h5 class="mb-3">${key} Market Analysis</h5>
+              <h5 class="mb-3 d-flex align-items-center">
+                ${logoUrl ? `<img src="${logoUrl}" alt="${key}" width="30" height="30" class="me-2">` : ''}
+                ${key} Market Analysis
+              </h5>
               <p class="analysis-text">${formatAnalysisText(data[key].analysis)}</p>
             </div>`;
           }
@@ -679,76 +805,76 @@
 
         let html = '<div class="row">';
         
-        // Special case for Bitcoin Prices with USD/EUR/GBP
-        if (data.USD) {
-          html += `
-            <div class="col-md-4 mb-3">
-              <div class="card h-100 price-card">
-                <div class="card-header bg-primary text-white">
-                  <h5 class="mb-0">Bitcoin Prices</h5>
-                </div>
-                <div class="card-body">
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      <span class="currency-label">USD:</span> <span class="price-value">${data.USD.rate || 'N/A'}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      <span class="currency-label">EUR:</span> <span class="price-value">${data.EUR?.rate || 'N/A'}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      <span class="currency-label">GBP:</span> <span class="price-value">${data.GBP?.rate || 'N/A'}</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>`;
-        } else {
-          // For all other cryptocurrencies
-          let foundCrypto = false;
-          
-          for (const key in data) {
-            if (key !== 'updated' && !key.startsWith('error') && key !== 'prompt') {
-              const crypto = data[key];
-              if (crypto && (crypto.price_usd || crypto.formatted)) {
-                foundCrypto = true;
-                const price = crypto.formatted || `$${crypto.price_usd}`;
-                
-                html += `
-                  <div class="col-md-4 mb-3">
-                    <div class="card h-100 price-card">
-                      <div class="card-header bg-primary text-white">
+        // For all other cryptocurrencies
+        let foundCrypto = false;
+        
+        for (const key in data) {
+          if (key !== 'updated' && !key.startsWith('error') && key !== 'prompt') {
+            const crypto = data[key];
+            if (crypto && (crypto.price_usd || crypto.formatted)) {
+              foundCrypto = true;
+              const price = crypto.formatted || `$${crypto.price_usd}`;
+              
+              // Get logo URL based on cryptocurrency name
+              let logoUrl = '';
+              const lowerKey = key.toLowerCase();
+              
+              if (lowerKey.includes('bitcoin')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/btc.png';
+              } else if (lowerKey.includes('ethereum')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/eth.png';
+              } else if (lowerKey.includes('solana')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/sol.png';
+              } else if (lowerKey.includes('binance') || lowerKey.includes('bnb')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/bnb.png';
+              } else if (lowerKey.includes('xrp') || lowerKey.includes('ripple')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/xrp.png';
+              } else if (lowerKey.includes('cardano')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/ada.png';
+              } else if (lowerKey.includes('dogecoin')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/doge.png';
+              } else if (lowerKey.includes('polkadot')) {
+                logoUrl = 'https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@1a63530be6e374711a8554f31b17e4cb92c25fa5/128/color/dot.png';
+              }
+              
+              html += `
+                <div class="col-md-4 mb-3">
+                  <div class="card h-100 price-card">
+                    <div class="card-header bg-primary text-white">
+                      <div class="d-flex align-items-center">
+                        ${logoUrl ? `<img src="${logoUrl}" alt="${key}" width="30" height="30" class="me-2">` : ''}
                         <h5 class="mb-0">${key}</h5>
                       </div>
-                      <div class="card-body text-center">
-                        <div class="price-value mb-3">${price}</div>`;
-                        
-                if (crypto.price_eur) {
-                  try {
-                    html += `<p class="card-text mb-2"><span class="currency-label">EUR:</span> €${parseFloat(crypto.price_eur).toFixed(2)}</p>`;
-                  } catch (e) {
-                    html += `<p class="card-text mb-2"><span class="currency-label">EUR:</span> €${crypto.price_eur}</p>`;
-                  }
-                }
-                
-                if (crypto.price_gbp) {
-                  try {
-                    html += `<p class="card-text mb-2"><span class="currency-label">GBP:</span> £${parseFloat(crypto.price_gbp).toFixed(2)}</p>`;
-                  } catch (e) {
-                    html += `<p class="card-text mb-2"><span class="currency-label">GBP:</span> £${crypto.price_gbp}</p>`;
-                  }
-                }
-                
-                html += `
-                      </div>
                     </div>
-                  </div>`;
+                    <div class="card-body text-center">
+                      <div class="price-value mb-3">${price}</div>`;
+                      
+              if (crypto.price_eur) {
+                try {
+                  html += `<p class="card-text mb-2"><span class="currency-label">EUR:</span> €${parseFloat(crypto.price_eur).toFixed(2)}</p>`;
+                } catch (e) {
+                  html += `<p class="card-text mb-2"><span class="currency-label">EUR:</span> €${crypto.price_eur}</p>`;
+                }
               }
+              
+              if (crypto.price_gbp) {
+                try {
+                  html += `<p class="card-text mb-2"><span class="currency-label">GBP:</span> £${parseFloat(crypto.price_gbp).toFixed(2)}</p>`;
+                } catch (e) {
+                  html += `<p class="card-text mb-2"><span class="currency-label">GBP:</span> £${crypto.price_gbp}</p>`;
+                }
+              }
+              
+              html += `
+                    </div>
+                  </div>
+                </div>`;
             }
           }
-          
-          if (!foundCrypto) {
-            return '<div class="alert alert-info">No cryptocurrency price data available</div>';
-          }
+        }
+        
+        if (!foundCrypto) {
+          return '<div class="alert alert-info">No cryptocurrency price data available</div>';
         }
         
         html += '</div>';
