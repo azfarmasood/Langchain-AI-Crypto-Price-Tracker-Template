@@ -4,91 +4,374 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CR.Chellange Cryptocurrency Price Tracker</title>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3a0ca3;
+      --accent-color: #4cc9f0;
+      --light-bg: #f8f9fa;
+      --dark-bg: #212529;
+      --text-color: #333333;
+      --light-text: #f8f9fa;
+      --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      --hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+    
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+    }
+    
     img {
       max-width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+    
     pre {
       background-color: #f8f9fa;
       padding: 15px;
-      border-radius: 5px;
+      border-radius: 8px;
       max-height: 400px;
       overflow-y: auto;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
     }
-    .loading { display: none; }
-    .crypto-card { transition: transform 0.3s ease; }
+    
+    .loading { 
+      display: none; 
+    }
+    
+    /* Card Styles */
+    .card {
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: var(--hover-shadow);
+    }
+    
+    .card-header {
+      border-bottom: none;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+    }
+    
+    .crypto-card { 
+      transition: transform 0.3s ease, box-shadow 0.3s ease; 
+      height: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+    }
+    
     .crypto-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      transform: translateY(-10px);
+      box-shadow: var(--hover-shadow);
     }
-    .crypto-button { width: 100%; }
+    
+    .crypto-button { 
+      width: 100%; 
+      border-radius: 8px;
+      font-weight: 600;
+      padding: 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .crypto-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    /* Crypto Icon Styles */
+    .crypto-icon {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    
+    .crypto-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 2px;
+      background-color: white;
+    }
+    
+    /* Analysis Card Styles */
     .analysis-card {
-      background-color: #f8f9fa;
-      border-left: 4px solid #0d6efd;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      background-color: white;
+      border-left: 4px solid var(--primary-color);
+      padding: 25px;
+      margin-bottom: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+    
+    .analysis-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
     .analysis-text {
       white-space: pre-line;
-      line-height: 1.6;
+      line-height: 1.8;
       margin-bottom: 0;
-      font-size: 14px;
-      color: #333;
+      font-size: 15px;
+      color: var(--text-color);
     }
+    
+    .analysis-text strong {
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    
+    .analysis-text em {
+      font-style: italic;
+      color: #505050;
+    }
+    
+    .analysis-text br + br {
+      content: "";
+      display: block;
+      margin-top: 12px;
+    }
+    
+    .info-section {
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    
+    /* Price Card Styles */
     .price-card {
-      transition: transform 0.2s ease;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border-radius: 12px;
+      overflow: hidden;
     }
+    
     .price-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.1);
     }
+    
+    .price-card .card-header {
+      text-align: center;
+      padding: 1.2rem 1rem;
+    }
+    
     .price-value {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #333;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+    
     .currency-label {
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: #666;
+      font-weight: 600;
     }
+    
     .section-title {
       margin-bottom: 1.5rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid #eee;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid #eee;
+      font-weight: 700;
+      color: var(--secondary-color);
+    }
+    
+    /* Prompt Section Styles */
+    .prompt-card {
+      background-color: white;
+      border: none;
+      box-shadow: var(--card-shadow);
+      border-radius: 15px;
+      margin-bottom: 35px;
+    }
+    
+    .prompt-input {
+      border-radius: 50px;
+      padding: 15px 25px;
+      border: 2px solid #e0e0e0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .prompt-input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+    }
+    
+    .prompt-button {
+      border-radius: 50px;
+      min-width: 120px;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      border: none;
+      font-weight: 600;
+      padding: 12px 25px;
+      transition: all 0.3s ease;
+    }
+    
+    .prompt-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    .example-prompt {
+      display: inline-block;
+      margin: 0.3rem;
+      padding: 0.5rem 1rem;
+      background-color: #f0f7ff;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      color: var(--primary-color);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(67, 97, 238, 0.2);
+    }
+    
+    .example-prompt:hover {
+      background-color: var(--primary-color);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+    }
+    
+    /* Results Section */
+    #results .card-header {
+      background: linear-gradient(135deg, var(--dark-bg) 0%, #343a40 100%);
+    }
+    
+    /* Loading Animation */
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+      border-width: 0.3em;
+      color: var(--primary-color);
+    }
+    
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, var(--dark-bg) 0%, #343a40 100%);
+      color: white;
+      padding: 25px 0;
+      margin-top: 50px;
     }
   </style>
 </head>
 <body>
-  <div class="container mt-5">
-    <h1 class="text-center mb-4">CR.Chellange Cryptocurrency Price Tracker</h1>
+  <div class="container my-5">
+    <div class="text-center mb-5">
+      <h1 class="display-4 fw-bold" style="background: linear-gradient(to right, #4361ee, #4cc9f0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">CR.Chellange Cryptocurrency Price Tracker</h1>
+      <p class="lead text-muted">Get real-time prices and market analysis</p>
+    </div>
 
-    <!-- Cryptocurrency Selection -->
-    <div class="card mb-4">
+    <!-- Prompt Input Section -->
+    <div class="card prompt-card mb-5">
       <div class="card-header bg-primary text-white">
-        <h3>Choose a Cryptocurrency</h3>
+        <h3><i class="bi bi-robot"></i> Hi, I'm Your Crypto Currency AI agent Ask me anything about Crypto Currency</h3>
       </div>
-      <div class="card-body">
-        <div class="row">
+      <div class="card-body p-4">
+        <form id="prompt-form" class="mb-4">
+          <div class="input-group">
+            <span class="input-group-text bg-transparent border-end-0">
+              <i class="bi bi-search"></i>
+            </span>
+            <input 
+              type="text" 
+              id="crypto-prompt" 
+              class="form-control prompt-input border-start-0" 
+              placeholder="Example What is the price of Bitcoin?"
+              required
+            >
+            <button class="btn btn-primary prompt-button" type="submit">
+              Submit
+            </button>
+          </div>
+        </form>
+        
+        <div class="mb-2">
+          <p class="text-muted mb-3">Here some examples</p>
+          <div class="example-prompts">
+            <span class="example-prompt"><i class="bi bi-currency-bitcoin me-1"></i>Show me Bitcoin price</span>
+            <span class="example-prompt"><i class="bi bi-question-circle me-1"></i>What is ETC?</span>
+            <span class="example-prompt"><i class="bi bi-graph-up-arrow me-1"></i>What's the current price of Solana?</span>
+            <span class="example-prompt"><i class="bi bi-info-circle me-1"></i>Explain how Ethereum works</span>
+            <span class="example-prompt"><i class="bi bi-bar-chart me-1"></i>Show top cryptocurrencies</span>
+            <span class="example-prompt"><i class="bi bi-link-45deg me-1"></i>What is a blockchain?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Cryptocurrencies Grid Section -->
+    <div class="card mb-5">
+      <div class="card-header bg-primary text-white">
+        <h3><i class="bi bi-grid-3x3-gap-fill me-2"></i>Here are list of some of the most popular cryptocurrencies</h3>
+      </div>
+      <div class="card-body p-4">
+        <div class="row g-4">
           {% for key, source in sources.items() %}
           <div class="col-md-3 mb-3">
             <div class="card h-100 crypto-card {% if key == 'bitcoin_prices' %}border-primary{% endif %}">
-              <div class="card-body d-flex flex-column">
-                <h5 class="card-title">{{ source.name }}</h5>
+              <div class="card-body d-flex flex-column p-4">
+                <div class="crypto-icon mb-3">
+                  {% if 'bitcoin' in key %}
+                    <img src="https://assets.coingecko.com/coins/images/1/large/bitcoin.png" alt="Bitcoin Logo">
+                  {% elif 'ethereum' in key %}
+                    <img src="https://assets.coingecko.com/coins/images/279/large/ethereum.png" alt="Ethereum Logo">
+                  {% elif 'solana' in key %}
+                    <img src="https://assets.coingecko.com/coins/images/4128/large/solana.png" alt="Solana Logo">
+                  {% elif 'binance' in key or 'bnb' in key %}
+                    <img src="https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png" alt="Binance Coin Logo">
+                  {% elif 'xrp' in key or 'ripple' in key %}
+                    <img src="https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png" alt="XRP Logo">
+                  {% elif 'cardano' in key %}
+                    <img src="https://assets.coingecko.com/coins/images/975/large/cardano.png" alt="Cardano Logo">
+                  {% elif 'dogecoin' in key %}
+                    <img src="https://assets.coingecko.com/coins/images/5/large/dogecoin.png" alt="Dogecoin Logo">
+                  {% elif 'polkadot' in key %}
+                    <img src="https://assets.coingecko.com/coins/images/12171/large/polkadot.png" alt="Polkadot Logo">
+                  {% elif 'top' in key %}
+                    <img src="https://cdn-icons-png.flaticon.com/512/6001/6001527.png" alt="Top Cryptocurrencies">
+                  {% else %}
+                    <img src="https://cdn-icons-png.flaticon.com/512/2091/2091665.png" alt="Cryptocurrency">
+                  {% endif %}
+                </div>
+                <h5 class="card-title mb-3">{{ source.name }}</h5>
                 <div class="mt-auto">
                   <button
                     class="btn btn-primary crypto-button scrape-btn"
                     data-source="{{ key }}"
                   >
-                    Get Prices
+                    <i class="bi bi-graph-up me-1"></i> Get Prices
                   </button>
                 </div>
               </div>
@@ -100,57 +383,81 @@
     </div>
 
     <!-- Loading indicator -->
-    <div id="loading" class="loading text-center">
-      <div class="spinner-border" role="status">
+    <div id="loading" class="loading text-center my-5 py-5">
+      <div class="spinner-border mb-3" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
-      <p>Getting cryptocurrency prices... please wait</p>
+      <p class="lead">Getting cryptocurrency data... please wait</p>
+      <div class="progress mt-3" style="height: 6px; max-width: 300px; margin: 0 auto;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+      </div>
     </div>
 
     <!-- Results section -->
     <div id="results" style="display: none;">
-      <div class="card">
+      <div class="card mb-5">
         <div class="card-header bg-dark text-white">
-          <h3>Results</h3>
+          <h3 id="results-title" class="mb-0"><i class="bi bi-check-circle me-2"></i>Results</h3>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
           <!-- Price Information Section -->
           <div id="price-section" class="mb-5">
-            <h4 class="section-title">Current Prices</h4>
+            <h4 class="section-title"><i class="bi bi-cash-coin me-2"></i>Current Prices</h4>
             <div id="price-content" class="mb-4"></div>
           </div>
 
           <!-- Visualization -->
           <div id="visualization-section" class="mb-5">
-            <h4 class="section-title">Price Chart</h4>
-            <div id="visualization" class="mb-4"></div>
+            <h4 class="section-title"><i class="bi bi-graph-up me-2"></i>Price Chart</h4>
+            <div id="visualization" class="mb-4 text-center"></div>
           </div>
           
           <!-- Analysis Section -->
           <div id="analysis-section">
-            <h4 class="section-title">Market Analysis</h4>
+            <h4 class="section-title"><i class="bi bi-filetype-ai me-2"></i>Market Analysis</h4>
             <div id="analysis-content" class="mb-4"></div>
           </div>
 
           <!-- Download Link -->
           <div id="download-section" class="mb-4 text-end">
-            <a id="download-link" href="#" class="btn btn-primary">Download CSV</a>
+            <a id="download-link" href="#" class="btn btn-primary">
+              <i class="bi bi-download me-2"></i>Download CSV
+            </a>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <footer class="bg-light py-3 mt-5">
+  <footer class="py-4 mt-5">
     <div class="container text-center">
-      <p>CR.Chellange Cryptocurrency Price Tracker</p>
+      <p class="mb-0">CR.Chellange Cryptocurrency Price Tracker</p>
     </div>
   </footer>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Set up button click handlers
       document.querySelectorAll('.scrape-btn').forEach(button => {
         button.addEventListener('click', () => scrapeSource(button.dataset.source));
+      });
+      
+      // Set up prompt form submission
+      document.getElementById('prompt-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const prompt = document.getElementById('crypto-prompt').value.trim();
+        if (prompt) {
+          processPrompt(prompt);
+        }
+      });
+      
+      // Set up example prompt clicks
+      document.querySelectorAll('.example-prompt').forEach(example => {
+        example.addEventListener('click', () => {
+          const prompt = example.textContent;
+          document.getElementById('crypto-prompt').value = prompt;
+          processPrompt(prompt);
+        });
       });
     });
 
@@ -165,58 +472,164 @@
       }
       hideLoading();
     }
+    
+    async function processPrompt(prompt) {
+      showLoading();
+      try {
+        const res = await fetch('/prompt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt })
+        });
+        const data = await res.json();
+        displayResults(data);
+      } catch (err) {
+        console.error(err);
+        alert('Error: ' + err);
+        hideLoading();
+      }
+    }
 
     function displayResults(data) {
-      const resultsDiv = document.getElementById('results');
-      const analysisSection = document.getElementById('analysis-section');
-      const analysisContent = document.getElementById('analysis-content');
-      const priceSection = document.getElementById('price-section');
-      const priceContent = document.getElementById('price-content');
-      const downloadSection = document.getElementById('download-section');
-      const visualizationSection = document.getElementById('visualization-section');
-
-      resultsDiv.style.display = 'block';
-
+      hideLoading();
+      
       if (data.error) {
-        // Hide all sections on error
-        priceSection.style.display = 'none';
-        visualizationSection.style.display = 'none';
-        downloadSection.style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('results-title').textContent = 'Error';
+        document.getElementById('price-section').style.display = 'none';
+        document.getElementById('visualization-section').style.display = 'none';
+        document.getElementById('analysis-section').style.display = 'none';
+        document.getElementById('download-section').style.display = 'none';
+        document.getElementById('information-section').style.display = 'none';
         
-        // Show error in the analysis section instead
-        analysisSection.style.display = 'block';
-        analysisContent.innerHTML = `<div class="alert alert-danger mb-4"><p><strong>Error:</strong> ${data.error}</p></div>`;
+        // Add error div if not exists
+        let errorDiv = document.getElementById('error-message');
+        if (!errorDiv) {
+          errorDiv = document.createElement('div');
+          errorDiv.id = 'error-message';
+          errorDiv.className = 'alert alert-danger';
+          document.querySelector('#results .card-body').prepend(errorDiv);
+        }
+        
+        errorDiv.textContent = data.error;
+        errorDiv.style.display = 'block';
+        
+        // Scroll to results
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
         return;
       }
-
-      // Show price data
-      priceSection.style.display = 'block';
-      priceContent.innerHTML = generatePriceHTML(data.data);
       
-      // Show chart visualization
-      visualizationSection.style.display = 'block';
-      const visDiv = document.getElementById('visualization');
-      visDiv.innerHTML = data.images?.chart
-        ? `<img src="/${data.images.chart}" alt="Cryptocurrency Price Chart" class="img-fluid">`
-        : '<p>No visualization available</p>';
+      // Hide error message if exists
+      const errorDiv = document.getElementById('error-message');
+      if (errorDiv) {
+        errorDiv.style.display = 'none';
+      }
       
-      // Show analysis data
-      analysisSection.style.display = 'block';
-      analysisContent.innerHTML = generateAnalysisHTML(data.data);
-
-      // Show download link
-      downloadSection.style.display = 'block';
-      const downloadLink = document.getElementById('download-link');
-      if (data.csv_file) {
-        const src = data.csv_file.split('/')[1].split('_')[0];
-        downloadLink.href = `/download/${src}`;
-        downloadLink.style.display = 'inline-block';
+      // Set results title
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.style.display = 'block';
+      document.getElementById('results-title').textContent = `Results for: "${data.prompt}"`;
+      
+      // Get section elements
+      const priceSection = document.getElementById('price-section');
+      const priceContent = document.getElementById('price-content');
+      const visualizationSection = document.getElementById('visualization-section');
+      const analysisSection = document.getElementById('analysis-section');
+      const analysisContent = document.getElementById('analysis-content');
+      const downloadSection = document.getElementById('download-section');
+      const informationSection = document.getElementById('information-section') || createInformationSection();
+      const informationContent = document.getElementById('information-content');
+      
+      // Check if this is an information query or price query
+      if (data.query_type === 'information') {
+        // Information response - hide price sections, show information
+        priceSection.style.display = 'none';
+        visualizationSection.style.display = 'none';
+        analysisSection.style.display = 'none';
+        downloadSection.style.display = 'none';
+        
+        // Show information section
+        informationSection.style.display = 'block';
+        informationContent.innerHTML = `
+          <div class="analysis-card info-section">
+            <p class="analysis-text">${formatText(data.information)}</p>
+          </div>`;
       } else {
-        downloadLink.style.display = 'none';
+        // Price query response - show prices, hide information
+        informationSection.style.display = 'none';
+        
+        // Show price data
+        priceSection.style.display = 'block';
+        priceContent.innerHTML = generatePriceHTML(data.data);
+        
+        // Show chart visualization
+        visualizationSection.style.display = 'block';
+        const visDiv = document.getElementById('visualization');
+        visDiv.innerHTML = data.images?.chart
+          ? `<img src="/${data.images.chart}" alt="Cryptocurrency Price Chart" class="img-fluid">`
+          : '<p>No visualization available</p>';
+        
+        // Show analysis data
+        analysisSection.style.display = 'block';
+        analysisContent.innerHTML = generateAnalysisHTML(data.data);
+
+        // Show download link
+        downloadSection.style.display = 'block';
+        const downloadLink = document.getElementById('download-link');
+        if (data.csv_file) {
+          const src = data.csv_file.split('/')[1].split('_')[0];
+          downloadLink.href = `/download/${src}`;
+          downloadLink.style.display = 'inline-block';
+        } else {
+          downloadLink.style.display = 'none';
+        }
       }
 
       // Scroll to results
       resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function createInformationSection() {
+      // Create information section if it doesn't exist
+      const infoSection = document.createElement('div');
+      infoSection.id = 'information-section';
+      infoSection.className = 'mb-5';
+      
+      const titleElement = document.createElement('h4');
+      titleElement.className = 'section-title';
+      titleElement.textContent = 'Cryptocurrency Information';
+      
+      const contentElement = document.createElement('div');
+      contentElement.id = 'information-content';
+      contentElement.className = 'mb-4';
+      
+      infoSection.appendChild(titleElement);
+      infoSection.appendChild(contentElement);
+      
+      // Insert after the results title
+      document.querySelector('#results .card-body').appendChild(infoSection);
+      
+      return infoSection;
+    }
+    
+    function formatText(text) {
+      if (!text) return 'No information available';
+      
+      // Format the text - replace asterisks with appropriate styling
+      return text
+        // First handle numbered lists with formatting
+        .replace(/(\d+)\.\s*\*\*([^*]+)\*\*/g, '<p><strong>$1. $2</strong></p>') // Replace "1. **Text**" with styled numbered headings
+        // Then replace other asterisk formatting
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>') // Replace **text** with <strong>text</strong>
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>') // Replace *text* with <em>text</em>
+        // Remove remaining asterisks that might be used as bullet points
+        .replace(/^\s*\*\s+/gm, '<br>• ') // Replace "* " at start of lines with bullet points
+        .replace(/\n\n/g, '<br><br>') // Replace double newlines with double <br> tags
+        .replace(/\n/g, '<br>') // Replace single newlines with <br> tags
+        .replace(/\s{2,}/g, ' ') // Replace multiple spaces with a single space
+        .trim();
     }
 
     function generateAnalysisHTML(data) {
@@ -294,7 +707,7 @@
           let foundCrypto = false;
           
           for (const key in data) {
-            if (key !== 'updated' && !key.startsWith('error')) {
+            if (key !== 'updated' && !key.startsWith('error') && key !== 'prompt') {
               const crypto = data[key];
               if (crypto && (crypto.price_usd || crypto.formatted)) {
                 foundCrypto = true;
